@@ -2,9 +2,12 @@ package kr.co.bepo.distancetrackerapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import kr.co.bepo.distancetrackerapp.Permissions.hasLocationPermission
 import kr.co.bepo.distancetrackerapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-
+        if (hasLocationPermission(this)) {
+            navController.navigate(R.id.action_permissionFragment_to_mapsFragment)
+        }
     }
 }
