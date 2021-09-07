@@ -1,0 +1,24 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=31:3A:C9:C3:E7:E0:BE:DB:D7:3F:2F:8C:79:53:D4:5B:D5:64:D4:FD%3Bkr.co.bepo.distancetrackerapp
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    kr.co.bepo.distancetrackerapp
+
+    SHA-1 certificate fingerprint:
+    31:3A:C9:C3:E7:E0:BE:DB:D7:3F:2F:8C:79:53:D4:5B:D5:64:D4:FD
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">YOUR_KEY_HERE</string>
+</resources>
