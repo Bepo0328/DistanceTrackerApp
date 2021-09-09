@@ -1,4 +1,4 @@
-package kr.co.bepo.distancetrackerapp
+package kr.co.bepo.distancetrackerapp.util
 
 object Constants {
 

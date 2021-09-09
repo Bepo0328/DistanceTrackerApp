@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
-import kr.co.bepo.distancetrackerapp.Permissions.hasLocationPermission
-import kr.co.bepo.distancetrackerapp.Permissions.requestLocationPermission
+import kr.co.bepo.distancetrackerapp.util.Permissions.hasLocationPermission
+import kr.co.bepo.distancetrackerapp.util.Permissions.requestLocationPermission
 import kr.co.bepo.distancetrackerapp.databinding.FragmentPermissionBinding
 
 class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {

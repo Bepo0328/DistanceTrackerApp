@@ -1,10 +1,10 @@
-package kr.co.bepo.distancetrackerapp
+package kr.co.bepo.distancetrackerapp.util
 
 import android.Manifest
 import android.content.Context
 import androidx.fragment.app.Fragment
 import com.vmadalin.easypermissions.EasyPermissions
-import kr.co.bepo.distancetrackerapp.Constants.PERMISSION_LOCATION_REQUEST_CODE
+import kr.co.bepo.distancetrackerapp.util.Constants.PERMISSION_LOCATION_REQUEST_CODE
 
 object Permissions {
 
