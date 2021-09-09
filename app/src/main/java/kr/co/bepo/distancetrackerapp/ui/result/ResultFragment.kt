@@ -1,4 +1,4 @@
-package kr.co.bepo.distancetrackerapp
+package kr.co.bepo.distancetrackerapp.ui.result
 
 import android.os.Bundle
 import android.view.LayoutInflater

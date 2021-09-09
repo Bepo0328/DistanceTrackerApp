@@ -1,4 +1,4 @@
-package kr.co.bepo.distancetrackerapp
+package kr.co.bepo.distancetrackerapp.ui.permission
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
+import kr.co.bepo.distancetrackerapp.R
+import kr.co.bepo.distancetrackerapp.databinding.FragmentPermissionBinding
 import kr.co.bepo.distancetrackerapp.util.Permissions.hasLocationPermission
 import kr.co.bepo.distancetrackerapp.util.Permissions.requestLocationPermission
-import kr.co.bepo.distancetrackerapp.databinding.FragmentPermissionBinding
 
 class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 

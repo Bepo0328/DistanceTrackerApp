@@ -1,4 +1,4 @@
-package kr.co.bepo.distancetrackerapp
+package kr.co.bepo.distancetrackerapp.ui.maps
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -15,9 +15,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kr.co.bepo.distancetrackerapp.R
 import kr.co.bepo.distancetrackerapp.databinding.FragmentMapsBinding
 import kr.co.bepo.distancetrackerapp.service.TrackerService
 import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_START
@@ -27,7 +27,6 @@ import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.show
 import kr.co.bepo.distancetrackerapp.util.Permissions.hasBackgroundLocationPermission
 import kr.co.bepo.distancetrackerapp.util.Permissions.requestBackgroundLocationPermission
 
-@AndroidEntryPoint
 class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
     EasyPermissions.PermissionCallbacks {
 
