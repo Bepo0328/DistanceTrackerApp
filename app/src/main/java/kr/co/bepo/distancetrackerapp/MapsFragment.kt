@@ -1,33 +1,35 @@
 package kr.co.bepo.distancetrackerapp
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kr.co.bepo.distancetrackerapp.databinding.FragmentMapsBinding
+import kr.co.bepo.distancetrackerapp.service.TrackerService
+import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_START
 import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.disable
 import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.hide
 import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.show
 import kr.co.bepo.distancetrackerapp.util.Permissions.hasBackgroundLocationPermission
 import kr.co.bepo.distancetrackerapp.util.Permissions.requestBackgroundLocationPermission
 
-class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, EasyPermissions.PermissionCallbacks {
+@AndroidEntryPoint
+class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
+    EasyPermissions.PermissionCallbacks {
 
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
@@ -84,8 +86,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
     private fun initButton() = with(binding) {
         startButton.setOnClickListener { onStartButtonClicked() }
-        stopButton.setOnClickListener {  }
-        resetButton.setOnClickListener {  }
+        stopButton.setOnClickListener { }
+        resetButton.setOnClickListener { }
     }
 
     private fun onStartButtonClicked() {
@@ -107,18 +109,39 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 val currentSecond = millisUnitFinished / 1_000
                 if (currentSecond.toString() == "0") {
                     binding.timerTextView.text = "GO"
-                    binding.timerTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    binding.timerTextView.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.black
+                        )
+                    )
                 } else {
                     binding.timerTextView.text = currentSecond.toString()
-                    binding.timerTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                    binding.timerTextView.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.red
+                        )
+                    )
                 }
             }
 
             override fun onFinish() {
+                sendActionCommandToService(ACTION_SERVICE_START)
                 binding.timerTextView.hide()
             }
         }
         timer.start()
+    }
+
+    private fun sendActionCommandToService(action: String) {
+        Intent(
+            requireContext(),
+            TrackerService::class.java
+        ).apply {
+            this.action = action
+            requireContext().startService(this)
+        }
     }
 
     override fun onRequestPermissionsResult(

@@ -55,9 +55,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
     // Lifecycle
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
@@ -72,6 +70,9 @@ dependencies {
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
+
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltLifecycleViewmodelVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltCompilerVersion"
 
     // Easy Permission
     implementation "com.vmadalin:easypermissions-ktx:$easyPermissionsVersion"

@@ -40,9 +40,11 @@ ext {
     testEspressoVersion = "3.4.0"
 
     // Add Dependencies
-    lifecycleVersion = "2.3.1"
+    lifecycleVersion = "2.2.0"
     coroutinesVersion = "1.5.1"
     googleLocationVersion = "18.0.0"
-    MapsUtilsVersion="2.0.1"
+    MapsUtilsVersion="2.2.0"
     easyPermissionsVersion = "1.0.0"
+    hiltLifecycleViewmodelVersion = "1.0.0-alpha03"
+    hiltCompilerVersion = "1.0.0"
 }
