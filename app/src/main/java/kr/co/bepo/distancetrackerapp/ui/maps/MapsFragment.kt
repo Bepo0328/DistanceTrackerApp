@@ -5,20 +5,22 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.ButtCap
-import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.delay
@@ -44,6 +46,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
     private lateinit var mMap: GoogleMap
 
+    var started = MutableLiveData(false)
+
     private var startTime = 0L
     private var stopTime = 0L
 
@@ -56,6 +60,24 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     ): View = FragmentMapsBinding.inflate(layoutInflater, container, false)
         .also { _binding = it }
         .root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(this)
+
+        initViews()
+    }
+
+    private fun initViews() = with(binding) {
+        startButton.setOnClickListener {
+            onStartButtonClicked()
+        }
+        stopButton.setOnClickListener {
+            onStopButtonClicked()
+        }
+        resetButton.setOnClickListener { }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -91,11 +113,25 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 followPolyline()
             }
         }
+        TrackerService.started.observe(viewLifecycleOwner) {
+            started.value = it
+            observeTracking(it)
+        }
         TrackerService.startTime.observe(viewLifecycleOwner) {
             startTime = it
         }
         TrackerService.stopTime.observe(viewLifecycleOwner) {
             stopTime = it
+            if (stopTime != 0L) {
+                showBiggerPicture()
+            }
+        }
+    }
+
+    private fun observeTracking(started: Boolean) {
+        if (started) {
+            binding.hintTextView.hide()
+            binding.stopButton.show()
         }
     }
 
@@ -131,24 +167,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         }
 
         return false
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
-
-        initButton()
-    }
-
-    private fun initButton() = with(binding) {
-        startButton.setOnClickListener {
-            onStartButtonClicked()
-        }
-        stopButton.setOnClickListener {
-            onStopButtonClicked()
-        }
-        resetButton.setOnClickListener { }
     }
 
     private fun onStartButtonClicked() {
@@ -214,6 +232,18 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             this.action = action
             requireContext().startService(this)
         }
+    }
+
+    private fun showBiggerPicture() {
+        val bounds = LatLngBounds.Builder()
+        for (location in locationList) {
+            bounds.include(location)
+        }
+        mMap.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds.build(), 100
+            ), 2_000, null
+        )
     }
 
     override fun onRequestPermissionsResult(

@@ -16,6 +16,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
+import kr.co.bepo.distancetrackerapp.ui.maps.MapUtil
+import kr.co.bepo.distancetrackerapp.ui.maps.MapUtil.calculateTheDistance
 import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_START
 import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_STOP
 import kr.co.bepo.distancetrackerapp.util.Constants.LOCATION_FASTEST_UPDATE_INTERVAL
@@ -58,6 +60,7 @@ class TrackerService : LifecycleService() {
             result.locations.let { locations ->
                 for (location in locations) {
                     updateLocationList(location)
+                    updateNotificationPeriodically()
                 }
             }
         }
@@ -131,6 +134,14 @@ class TrackerService : LifecycleService() {
 
     private fun removeLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun updateNotificationPeriodically() {
+        notification.apply {
+            setContentTitle("Distance Travelled")
+            setContentText(locationList.value?.let { calculateTheDistance(it) } + " km")
+        }
+        notificationManager.notify(NOTIFICATION_ID, notification.build())
     }
 
     private fun createNotificationChannel() {
