@@ -2,6 +2,8 @@ package kr.co.bepo.distancetrackerapp.ui.maps
 
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
+import java.text.DecimalFormat
 
 object MapUtil {
 
@@ -10,6 +12,25 @@ object MapUtil {
             .target(location)
             .zoom(18f)
             .build()
+    }
 
+    fun calculateElapsedTime(startTime: Long, stopTime: Long): String {
+        val elapsedTime = stopTime - startTime
+
+        val seconds = (elapsedTime / 1_000).toInt() % 60
+        val minutes = (elapsedTime / (1_000 * 60) % 60)
+        val hours = (elapsedTime / (1_000 * 60 * 60) % 24)
+
+        return "$hours:$minutes:$seconds"
+    }
+
+    fun calculateTheDistance(locationList: MutableList<LatLng>): String {
+        if (locationList.size > 1) {
+            val meters =
+                SphericalUtil.computeDistanceBetween(locationList[0], locationList.last())
+            val kilometers = meters / 1_000
+            return DecimalFormat("#.##").format(kilometers)
+        }
+        return "0.00"
     }
 }
