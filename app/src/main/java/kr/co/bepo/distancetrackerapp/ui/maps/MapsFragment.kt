@@ -2,19 +2,23 @@ package kr.co.bepo.distancetrackerapp.ui.maps
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.ButtCap
+import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.delay
@@ -22,8 +26,11 @@ import kotlinx.coroutines.launch
 import kr.co.bepo.distancetrackerapp.R
 import kr.co.bepo.distancetrackerapp.databinding.FragmentMapsBinding
 import kr.co.bepo.distancetrackerapp.service.TrackerService
+import kr.co.bepo.distancetrackerapp.ui.maps.MapUtil.setCameraPosition
 import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_START
+import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_STOP
 import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.disable
+import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.enable
 import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.hide
 import kr.co.bepo.distancetrackerapp.util.ExtensionFunctions.show
 import kr.co.bepo.distancetrackerapp.util.Permissions.hasBackgroundLocationPermission
@@ -74,8 +81,35 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         TrackerService.locationList.observe(viewLifecycleOwner) {
             if (it != null) {
                 locationList = it
-                Log.d("LocationList", locationList.toString())
+                if (locationList.size > 1) {
+                    binding.stopButton.enable()
+                }
+                drawPolyline()
+                followPolyline()
             }
+        }
+    }
+
+    private fun drawPolyline() {
+        val polyline = mMap.addPolyline(
+            PolylineOptions().apply {
+                width(10f)
+                color(Color.BLUE)
+                jointType(JointType.ROUND)
+                startCap(ButtCap())
+                endCap(ButtCap())
+                addAll(locationList)
+            }
+        )
+    }
+
+    private fun followPolyline() {
+        if (locationList.isNotEmpty()) {
+            mMap.animateCamera(
+                CameraUpdateFactory.newCameraPosition(
+                    setCameraPosition(locationList.last())
+                ), 1_000, null
+            )
         }
     }
 
@@ -99,8 +133,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     }
 
     private fun initButton() = with(binding) {
-        startButton.setOnClickListener { onStartButtonClicked() }
-        stopButton.setOnClickListener { }
+        startButton.setOnClickListener {
+            onStartButtonClicked()
+        }
+        stopButton.setOnClickListener {
+            onStopButtonClicked()
+        }
         resetButton.setOnClickListener { }
     }
 
@@ -113,6 +151,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         } else {
             requestBackgroundLocationPermission(this)
         }
+    }
+
+    private fun onStopButtonClicked() {
+        stopForegroundService()
+        binding.stopButton.hide()
+        binding.startButton.show()
     }
 
     private fun startCountDown() {
@@ -146,6 +190,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             }
         }
         timer.start()
+    }
+
+    private fun stopForegroundService() {
+        binding.startButton.disable()
+        sendActionCommandToService(ACTION_SERVICE_STOP)
     }
 
     private fun sendActionCommandToService(action: String) {
