@@ -5,17 +5,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -27,7 +24,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kr.co.bepo.distancetrackerapp.R
 import kr.co.bepo.distancetrackerapp.databinding.FragmentMapsBinding
+import kr.co.bepo.distancetrackerapp.model.Result
 import kr.co.bepo.distancetrackerapp.service.TrackerService
+import kr.co.bepo.distancetrackerapp.ui.maps.MapUtil.calculateElapsedTime
+import kr.co.bepo.distancetrackerapp.ui.maps.MapUtil.calculateTheDistance
 import kr.co.bepo.distancetrackerapp.ui.maps.MapUtil.setCameraPosition
 import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_START
 import kr.co.bepo.distancetrackerapp.util.Constants.ACTION_SERVICE_STOP
@@ -61,6 +61,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         .also { _binding = it }
         .root
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -77,11 +82,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             onStopButtonClicked()
         }
         resetButton.setOnClickListener { }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     @SuppressLint("MissingPermission")
@@ -124,6 +124,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             stopTime = it
             if (stopTime != 0L) {
                 showBiggerPicture()
+                displayResults()
             }
         }
     }
@@ -244,6 +245,24 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 bounds.build(), 100
             ), 2_000, null
         )
+    }
+
+    private fun displayResults() {
+        val result = Result(
+            calculateTheDistance(locationList),
+            calculateElapsedTime(startTime, stopTime)
+        )
+        lifecycleScope.launch {
+            delay(2_500L)
+            val directions = MapsFragmentDirections.actionMapsFragmentToResultFragment(result)
+            findNavController().navigate(directions)
+            binding.startButton.apply {
+                hide()
+                enable()
+            }
+            binding.stopButton.hide()
+            binding.resetButton.show()
+        }
     }
 
     override fun onRequestPermissionsResult(
