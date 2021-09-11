@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kr.co.bepo.distancetrackerapp.databinding.FragmentResultBinding
 
-class ResultFragment : Fragment() {
+class ResultFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
