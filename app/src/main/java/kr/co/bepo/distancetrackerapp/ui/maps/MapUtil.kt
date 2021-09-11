@@ -1,14 +1,10 @@
 package kr.co.bepo.distancetrackerapp.ui.maps
 
-import android.icu.util.LocaleData
-import android.util.Log
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter.ISO_LOCAL_TIME
 import java.util.*
 
 object MapUtil {
