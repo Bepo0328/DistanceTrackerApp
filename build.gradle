@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        navigationVersion = "2.4.0-alpha08"
+        navigationVersion = "2.4.0-alpha09"
         hiltVersion = "2.38.1"
     }
     repositories {
@@ -43,7 +43,7 @@ ext {
     lifecycleVersion = "2.2.0"
     coroutinesVersion = "1.5.1"
     googleLocationVersion = "18.0.0"
-    MapsUtilsVersion="2.2.0"
+    MapsUtilsVersion="2.2.3"
     easyPermissionsVersion = "1.0.0"
     hiltLifecycleViewmodelVersion = "1.0.0-alpha03"
     hiltCompilerVersion = "1.0.0"
